@@ -1,0 +1,16 @@
+{% load i18n %}
+<div class="column is-flex-grow-0 px-0">
+  <button class="button is-small toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="{% translate 'Toggle navigation' %}">
+    <span class="icon is-small">
+      <i class="fas fa-angles-left"></i>
+    </span>
+  </button>
+</div>
+<div class="column is-2">
+  <nav id="nav-sidebar">
+    <div class="block">
+      <input class="input is-small" type="search" id="nav-filter" placeholder="{% translate 'Start typing to filter…' %}" aria-label="{% translate 'Filter navigation items' %}">
+    </div>
+    {% include 'admin/app_list.html' with app_list=available_apps show_changelinks=False %}
+  </nav>
+</div>

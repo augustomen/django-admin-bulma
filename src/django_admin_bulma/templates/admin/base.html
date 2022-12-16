@@ -1,0 +1,145 @@
+{% load i18n static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+<head>
+<title>{% block title %}{% endblock %}</title>
+{% if bulma_url %}<link rel="stylesheet" href="{{ bulma_url }}">{% endif %}
+{% if fontawesome_url %}<link rel="stylesheet" href="{{ fontawesome_url }}">{% endif %}
+{% block dark-mode-vars %}
+  <link rel="stylesheet" href="{% static "admin/css/dark_mode.css" %}">
+{% endblock %}
+{% if not is_popup and is_nav_sidebar_enabled %}
+  <script src="{% static 'admin/js/nav_sidebar.js' %}" defer></script>
+{% endif %}
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">{% endif %}
+{% block extrahead %}{% endblock %}
+{% block responsive %}
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" href="{% static "admin/css/responsive.css" %}">
+  {% if LANGUAGE_BIDI %}<link rel="stylesheet" href="{% static "admin/css/responsive_rtl.css" %}">{% endif %}
+{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
+
+{% if not is_popup %}
+{% block header %}
+<nav id="header" class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    {% block branding %}{% endblock %}
+
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="user-tools">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  {% block usertools %}
+  {% if has_permission %}
+  <div class="navbar-menu">
+    <div class="navbar-start">
+      {% block navbar-start %}{% endblock %}
+    </div>
+    <div id="user-tools" class="navbar-end">
+      <div class="navbar-item">
+        {% block welcome-msg %}
+          <span>{% translate 'Welcome,' %}&nbsp;</span>
+          <strong>{% firstof user.get_short_name user.get_username %}</strong>
+        {% endblock %}
+      </div>
+
+      {% block userlinks %}
+        {% if site_url %}
+          <a class="navbar-item" href="{{ site_url }}">{% translate 'View site' %}</a>
+        {% endif %}
+
+        {% if user.is_active and user.is_staff %}
+          {% url 'django-admindocs-docroot' as docsroot %}
+          {% if docsroot %}
+            <a class="navbar-item" href="{{ docsroot }}">{% translate 'Documentation' %}</a>
+          {% endif %}
+        {% endif %}
+
+        {% if user.has_usable_password %}
+        <a class="navbar-item" href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a>
+        {% endif %}
+
+        <div class="navbar-item">
+          <div class="buttons">
+            <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+              {% csrf_token %}
+              <button class="button" type="submit">{% translate 'Log out' %}</button>
+            </form>
+          </div>
+        </div>
+      {% endblock userlinks %}
+    </div>
+  </div>
+  {% endif %}
+  {% endblock usertools %}
+</nav>
+{% endblock header %}
+{% endif %}
+
+<section class="section">
+  {% if not is_popup %}
+    {% block breadcrumbs %}
+      <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'admin:index' %}">{% translate 'Home' %}</a></li>
+          {% if title %}<li class="is-active"><a>{{ title }}</a></li>{% endif %}
+        </ul>
+      </nav>
+    {% endblock %}
+  {% endif %}
+
+  {% block messages %}
+    {% if messages %}
+      <div class="block">
+      {% for message in messages %}
+        <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
+          <button class="delete"></button>
+          {{ message|capfirst }}
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endblock messages %}
+
+  {% block container %}
+    <div id="main" class="columns">
+      {% block columns %}
+        {% if not is_popup and is_nav_sidebar_enabled %}
+          {% block nav-sidebar %}
+            {% include "admin/nav_sidebar.html" %}
+          {% endblock nav-sidebar %}
+        {% endif %}
+
+        <div class="column">
+          <!-- Content -->
+          <div id="content">
+            {% block pretitle %}{% endblock %}
+            {% block content_title %}{% if title %}<h1 class="title">{{ title }}</h1>{% endif %}{% endblock %}
+            {% block content_subtitle %}{% if subtitle %}<h2 class="subtitle">{{ subtitle }}</h2>{% endif %}{% endblock %}
+            <div class="columns">
+              <div class="column">
+                {% block content %}
+                  {% block object-tools %}{% endblock %}
+                  {{ content }}
+                {% endblock content %}
+              </div>
+              {% block sidebar %}{% endblock %}
+            </div>
+          </div>
+          <!-- END Content -->
+        </div>
+      {% endblock columns %}
+    </div>
+  {% endblock container %}
+</section>
+{% block footer %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% load i18n %}
+
+{% if app_list %}
+  <aside class="menu">
+    {% for app in app_list %}
+      <p class="menu-label">{{ app.name }}</p>
+      <ul class="menu-list">
+        {% for model in app.models %}
+          <li role="menuitem">
+            {% if model.add_url %}
+              <a href="{{ model.add_url }}" class="is-pulled-right addlink {% if model.admin_url in request.path|urlencode %}is-active{% endif %}">
+                <i class="fas fa-plus"></i>
+                {% translate 'Add' %}
+              </a>
+            {% endif %}
+            {% if model.admin_url %}
+              <a role="menuitemtext" href="{{ model.admin_url }}"{% if model.admin_url in request.path|urlencode %} class="is-active" aria-current="page"{% endif %}>{{ model.name }}</a>
+            {% else %}
+              <a>{{ model.name }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  </aside>
+{% else %}
+  <p>{% translate 'You don’t have permission to view or edit anything.' %}</p>
+{% endif %}
