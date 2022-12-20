@@ -17,6 +17,9 @@
 
 {% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
 
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+
 {% if not is_popup %}
 {% block breadcrumbs %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -32,7 +35,7 @@
 {% block messages %}
   {{ block.super }}
   {% if cl.formset and cl.formset.errors %}
-    <div class="notification is-warning">
+    <div class="notification is-danger">
       {% if cl.formset.total_error_count == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
     </div>
     {{ cl.formset.non_form_errors }}
@@ -41,18 +44,31 @@
 
 {% block content %}
   <div id="content-main">
-    {% block object-tools %}
-      <ul class="object-tools">
-        {% block object-tools-items %}
-          {% change_list_object_tools %}
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <h1 class="title is-4">{{ title }}</h1>
+        </div>
+        {% block object-tools %}
+          {% block object-tools-items %}
+            {% change_list_object_tools %}
+          {% endblock %}
         {% endblock %}
-      </ul>
-    {% endblock %}
+      </div>
+      <div class="level-right">
+        {% block date_hierarchy %}
+          {% if cl.date_hierarchy %}
+            <div class="level-item">{% date_hierarchy cl %}</div>
+          {% endif %}
+        {% endblock %}
+        <div class="level-item">
+          {% block search %}{% search_form cl %}{% endblock %}
+        </div>
+      </div>
+    </div>
 
     <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
       <div class="changelist-form-container">
-        {% block search %}{% search_form cl %}{% endblock %}
-        {% block date_hierarchy %}{% if cl.date_hierarchy %}{% date_hierarchy cl %}{% endif %}{% endblock %}
 
         <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
         {% if cl.formset %}
@@ -75,13 +91,22 @@
   <div class="column is-2">
     {% block filters %}
       {% if cl.has_filters %}
-        <div id="changelist-filter">
-          <h2>{% translate 'Filter' %}</h2>
-          {% if cl.has_active_filters %}<h3 id="changelist-filter-clear">
-            <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
-          </h3>{% endif %}
-          {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
-        </div>
+        <article class="message" id="changelist-filter">
+          <div class="message-header">
+            <p>{% translate 'Filter' %}</p>
+          </div>
+          <div class="message-body">
+            {% if cl.has_active_filters %}
+              <div id="changelist-filter-clear" class="pb-3">
+                <a class="button is-small is-fullwidth" href="{{ cl.clear_all_filters_qs }}">
+                  <span class="icon"><i class="fas fa-xmark"></i></span>
+                  <span>{% translate "Clear all filters" %}</span>
+                </a>
+              </div>
+            {% endif %}
+            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+          </div>
+        </article>
       {% endif %}
     {% endblock filters %}
   </div>

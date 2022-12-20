@@ -1,0 +1,27 @@
+{% load bulma_form %}
+<div class="field is-horizontal">
+  <div class="field-label{% if not field|is_checkbox %} is-normal{% endif %}">
+    <label class="label" for="{{ field.auto_id }}">{{ field.field.label }}:</label>
+  </div>
+  <div class="field-body">
+    <div class="field">
+      <div class="control{% if control_class %} {{ control_class }}{% endif %}{% if is_expanded %} is-expanded{% endif %}{% if icon_left %} has-icons-left{% endif %}{% if icon_right %} has-icons-right{% endif %}">
+        {% if field|is_checkbox %}
+          <label class="checkbox" for="{{ field.auto_id }}">
+            {{ field }}
+          </label>
+        {% elif field|is_textinput %}
+          {{ field|add_class:'input' }}
+          {% if icon_left %}
+            <span class="icon is-left"><i class="{{ icon_left }}"></i></span>
+          {% endif %}
+          {% if icon_right %}
+            <span class="icon is-right"><i class="{{ icon_right }}"></i></span>
+          {% endif %}
+        {% else %}
+          {{ field }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+{% load bulma_form %}
+<div class="field">
+  <label class="label" for="{{ field.auto_id }}">{{ field.label }}:</label>
+  <div class="control">
+    {% if field|is_textinput %}
+      {{ field|add_class:'input' }}
+    {% else %}
+      {{ field }}
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static bulma_form %}
+{% block extrastyle %}
+  {{ block.super }}
+  {{ form.media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="columns">
+      <div class="column is-4 is-offset-4" id="content-main">
+        <div class="box">
+          <h2 class="title">{% blocktrans %}Login{% endblocktrans %}</h2>
+          <hr>
+          {% if form.errors and not form.non_field_errors %}
+            <p class="notification is-warning">
+              <button class="delete"></button>
+              {% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
+            </p>
+          {% endif %}
+          {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+              <p class="notification is-danger">
+                <button class="delete"></button>
+                {{ error }}
+              </p>
+            {% endfor %}
+          {% endif %}
+          {% if user.is_authenticated %}
+            <p class="errornote">
+              <button class="delete"></button>
+              {% blocktranslate trimmed %}
+                You are authenticated as {{ username }}, but are not authorized to
+                access this page. Would you like to login to a different account?
+              {% endblocktranslate %}
+            </p>
+          {% endif %}
+          <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% bulma_field form.username %}
+            {% bulma_field form.password %}
+            {% url 'admin_password_reset' as password_reset_url %}
+            {% if password_reset_url %}
+              <div class="password-reset-link">
+                <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
+              </div>
+            {% endif %}
+            <div class="field is-grouped is-grouped-centered">
+              <div class="control">
+                <input type="submit" class="button is-success" value="{% translate 'Log in' %}">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

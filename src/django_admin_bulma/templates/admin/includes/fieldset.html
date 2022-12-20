@@ -1,0 +1,52 @@
+{% load bulma_form %}
+<fieldset class="box module aligned {{ fieldset.classes }}">
+  {% if fieldset.name %}<h2 class="title is-5">{{ fieldset.name }}</h2>{% endif %}
+  {% if fieldset.description %}
+    <div class="description content">{{ fieldset.description|safe }}</div>
+  {% endif %}
+  {% for line in fieldset %}
+    {% for field in line %}
+      {% bulma_field field.field horizontal=True %}
+    {% endfor %}
+
+    {% comment %}
+    <div class="field is-horizontal form-row{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% if not line.has_visible_field %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
+      <div class="field-label is-normal">
+        {% for field in line %}
+          {% if forloop.first and not field.field.is_checkbox %}
+            <label class="label">{{ field.field.label }}:</label>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="field-body">
+        {% for field in line %}
+          <div class="field{% if not line.fields|length_is:'1' %} fieldBox{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% elif field.is_checkbox %} checkbox-row{% endif %}">
+            <div class="control is-expanded">
+              {% if field.is_checkbox %}
+                <label class="checkbox" for="{{ field.field.label }}">
+                  {{ field.field }}
+                  {{ field.field.label }}
+                </label>
+              {% else %}
+                {% if field.is_readonly %}
+                  <div class="readonly">{{ field.contents }}</div>
+                {% else %}
+                  {{ field.field }}
+                {% endif %}
+              {% endif %}
+              {% if field.field.help_text %}
+                <div class="help"{% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}>
+                  {{ field.field.help_text|safe }}
+                </div>
+              {% endif %}
+              {% if line.fields|length_is:'1' %}
+                <div class="help is-danger">{{ line.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endcomment %}
+  {% endfor %}
+</fieldset>

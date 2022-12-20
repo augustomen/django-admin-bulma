@@ -1,0 +1,42 @@
+{% load i18n %}
+{% block actions %}
+  <div class="actions level">
+    <div class="level-left">
+      {% block actions-counter %}
+        <div class="level-item">
+          {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">{{ selection_note }}</span>
+            {% if cl.result_count != cl.result_list|length %}
+            <span class="all hidden">{{ selection_note_all }}</span>
+            <span class="question hidden">
+                <a href="#" title="{% translate "Click here to select the objects across all pages" %}">{% blocktranslate with cl.result_count as total_count %}Select all {{ total_count }} {{ module_name }}{% endblocktranslate %}</a>
+            </span>
+            <span class="clear hidden"><a href="#">{% translate "Clear selection" %}</a></span>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endblock %}
+
+      {% block actions-form %}
+        <div class="level-item pt-2">
+          <div class="field has-addons">
+            <div class="control">
+              <a class="button is-small is-static">{{ action_form.action.label }}</a>
+            </div>
+            <div class="control">
+              <div class="select is-small">
+                {{ action_form.action }}
+              </div>
+            </div>
+            {% block actions-submit %}
+            <div class="control">
+              <button type="submit" class="button is-small is-info" title="{% translate "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% translate "Go" %}</button>
+            </div>
+            {% endblock %}
+          </div>
+          {{ action_form.select_across }}
+        </div>
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %}

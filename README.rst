@@ -5,6 +5,8 @@ A `Bulma <https://bulma.io/>`_-powered theme for Django admin.
 
 Currently written for (and only supporting) Django 4.0+.
 
+**Work in progress**.
+
 Quick start
 -----------
 
@@ -45,7 +47,6 @@ Quick start
         constants.ERROR: 'is-danger',
     }
 
-
 Notes
 -----
 
@@ -57,7 +58,10 @@ in your settings file to change the default locations::
     ADMIN_FONTAWESOME_URL = 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css'
 
 Optionally, you may decide to write your own context processor and provide the variables ``bulma_css`` and
-``fontawesome_url``.
+``fontawesome_url``. You can use those variables in your own templates by adding the tags::
+
+    <link rel="stylesheet" href="{{ bulma_url }}">
+    <link rel="stylesheet" href="{{ fontawesome_url }}">
 
 To do
 -----

@@ -1,0 +1,40 @@
+{% load i18n admin_urls %}
+<div class="submit-row level">
+  {% block submit-row %}
+    <div class="level-left">
+      {% if show_delete_link and original %}
+        <div class="level-item">
+          {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+          <a href="{% add_preserved_filters delete_url %}" class="button is-danger deletelink">{% translate "Delete" %}</a>
+        </div>
+      {% endif %}
+      {% if show_close %}
+        <div class="level-item">
+          <a href="{% url opts|admin_urlname:'changelist' %}" class="button is-ghost closelink">{% translate 'Close' %}</a>
+        </div>
+      {% endif %}
+    </div>
+    <div class="level-right">
+      {% if show_save_and_continue %}
+        <div class="level-item">
+          <input type="submit" value="{% if can_change %}{% translate 'Save and continue editing' %}{% else %}{% translate 'Save and view' %}{% endif %}" name="_continue" class="button">
+        </div>
+      {% endif %}
+      {% if show_save_and_add_another %}
+        <div class="level-item">
+          <input type="submit" value="{% translate 'Save and add another' %}" name="_addanother" class="button">
+        </div>
+      {% endif %}
+      {% if show_save_as_new %}
+        <div class="level-item">
+          <input type="submit" value="{% translate 'Save as new' %}" name="_saveasnew" class="button">
+        </div>
+      {% endif %}
+      {% if show_save %}
+        <div class="level-item">
+          <input type="submit" value="{% translate 'Save' %}" class="button is-success default" name="_save">
+        </div>
+      {% endif %}
+    </div>
+  {% endblock %}
+</div>
